@@ -1,0 +1,66 @@
+<?php
+	include 'connection.php';
+
+	$name= $_POST['username'];
+    $email= $_POST['email'];
+    $password= sha1($_POST['pass']);
+
+    $isValidEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+    if($connection){
+        if(strlen($password)<6){
+            echo "Password must be more than 6 characters";
+        }else if($isValidEmail == false){
+            echo "Email not valid";
+        }else{
+            $sqlCheckEmail = "SELECT * FROM 'users' WHERE 'email' LIKE '$email'";
+            $usernameQuery=mysqli_query($connection,$sqlChekEmail);
+            
+            if(mysql_num_rows($usernameQuery)>0){
+                echo "Email is Already used, Type another Email";
+            }else{
+                $sql_register="INSERT INTO `users`(`username`, `email`, `password`) VALUES ('$name','$email','$password')";
+                
+                if(mysqli_query($connection,$sql_register)){
+                    echo "Successfully Registered";
+                }else{
+                    echo "Failed to register";
+                }
+            }
+        }
+    }else{
+        echo "Connection Error";
+    }
+?>
+
+       
+       
+       
+<?php
+	include 'connection.php';
+
+	$name= mysqli_real_escape_string($_POST['username']);   
+    $password=mysqli_real_escape_string(sha1($_POST['pass']));
+
+    $isValidEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+    
+    if($connection){
+        if($isValidEmail == false){
+            echo "Email not valid";
+        }else{
+            $sqlCheckUser = "SELECT * FROM 'users' WHERE 'username' LIKE '$name'";
+            $usernameQuery=mysqli_query($connection,$sqlcheckUser);
+            if(mysqli_num_row($usernameQuery,$sqlCheckUser)>0){
+                $sqlLogin="SELECT * FROM 'users' WHERE 'username' LIKE '$name' AND 'password' LIKE '$password'";
+                $loginQuery=mysqli_query($connection,$sqlLogin);
+                if(mysqli_num_rows($loginQuer)>0){
+                    echo "Login Success"
+                }else{
+                 echo "Wrong Password or Username";   
+                }
+            }
+        }
+    }else{
+        echo "Connection failed";
+    }
+?>
